@@ -1,0 +1,4 @@
+
+
+target_sources_ifdef(CONFIG_ZMK_INPUT_PROCESSOR_KEYTOGGLE app PRIVATE input_processor_keytoggle.c)
+
