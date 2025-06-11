@@ -1,7 +1,7 @@
 # Copyright (c) 2024, The ZMK Contributors
 # SPDX-License-Identifier: MIT
 
-description: Input Processor for key binding from relative input
+description: Input Processor for key toggling behavior.
 
 compatible: "zmk,input-processor-keytoggle"
 
@@ -9,23 +9,11 @@ include: ip_zero_param.yaml
 
 properties:
   "#input-processor-cells":
-      type: int
-          const: 0
-            type:
-                type: int
-                  track_remainders:
-                      type: boolean
-                          description: Track remaining movement
-                            bindings:
-                                description: "Behaviors to be invoked"
-                                    type: phandle-array
-                                        required: true
-                                          tick:
-                                              description: "Required ticks to trigger a ball action. Higher values require more movement to trigger a ball action. If omitted, 10 will be used."
-                                                  type: int
-                                                    wait-ms:
-                                                        description: "Time to wait (in milliseconds) before triggering the next behavior binding. If omitted, it will be set to 0."
-                                                            type: int
-                                                              tap-ms:
-                                                                  description: "Time to wait (in milliseconds) between the press and release events on a triggered behavior binding. If omitted, it will be set to 0."
-                                                                      type: int
+    type: int
+    const: 0
+  type:
+    type: int
+  bindings:
+    description: "Behaviors to be invoked"
+    type: phandle-array
+    required: true

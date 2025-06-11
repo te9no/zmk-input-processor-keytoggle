@@ -1,4 +1,3 @@
+add_subdirectory(src/pointing)
 
-
-target_sources_ifdef(CONFIG_ZMK_INPUT_PROCESSOR_KEYTOGGLE app PRIVATE input_processor_keytoggle.c)
-
+zephyr_include_directories(include)
