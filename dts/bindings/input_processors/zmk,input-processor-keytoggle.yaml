@@ -8,12 +8,13 @@ compatible: "zmk,input-processor-keytoggle"
 include: ip_zero_param.yaml
 
 properties:
-  "#input-processor-cells":
-    type: int
-    const: 0
-  type:
-    type: int
-  bindings:
+  keycodes:
     description: "Behaviors to be invoked"
-    type: phandle-array
+    type: array
     required: true
+  wait-ms:
+    description: "Time to wait (in milliseconds) before triggering the next behavior binding. If omitted, it will be set to 0."
+    type: int
+  tap-ms:
+    description: "Time to wait (in milliseconds) between the press and release events on a triggered behavior binding. If omitted, it will be set to 0."
+    type: int

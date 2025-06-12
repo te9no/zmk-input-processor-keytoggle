@@ -1,1 +1,0 @@
-target_sources_ifdef(CONFIG_ZMK_INPUT_PROCESSOR_KEYBIND app PRIVATE input-processor-keytoggle.c)

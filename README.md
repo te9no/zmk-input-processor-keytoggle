@@ -10,7 +10,7 @@
 
 ## プロパティ
 
-- `keycode`: (必須) センサーがアクティブな間、押下状態にするキーコードを指定します。ZMKで定義されている任意のキーコード（例: `KC_BTN1`, `KC_BTN2`, `KC_BTN3`, `LS(MCLK)`など）を使用できます。
+- `keycodes`: (必須) センサーがアクティブな間、押下状態にするキーコードを指定します。ZMKで定義されている任意のキーコード（例: `KC_BTN1`, `KC_BTN2`, `KC_BTN3`, `LS(MCLK)`など）を使用できます。
 
 ## 使用例
 
@@ -48,17 +48,17 @@
 - `layers = <0>`: このInput Processorがレイヤー0でのみ有効になることを示します。
 - `input-processors = <&zip_keytoggle>, <&zip_xy_scaler 1 8>`: `zip_keytoggle` と `zip_xy_scaler` の両方のInput Processorが、センサーからの入力イベントを処理するように指定しています。
 - `zip_keytoggle`: `zmk,input-processor-keytoggle` と互換性のあるInput Processorのインスタンスです。
-- `keycode = <KC_BTN3>`: このInput Processorが、センサーがアクティブな間、`KC_BTN3`（マウス中ボタン）を押し続けるように設定されています。
-- `#input-processor-cells = <0>`: このInput Processorがデバイスツリーでインスタンス化される際に、追加のパラメータを必要としないことを示します。`keycode` はプロパティとして直接指定されます。
+- `keycodes = <KC_BTN3>`: このInput Processorが、センサーがアクティブな間、`KC_BTN3`（マウス中ボタン）を押し続けるように設定されています。
+- `#input-processor-cells = <0>`: このInput Processorがデバイスツリーでインスタンス化される際に、追加のパラメータを必要としないことを示します。`keycodes` はプロパティとして直接指定されます。
 
 ## 動作原理
 
 `zmk,input-processor-keytoggle` は、以下のロジックで動作します。
 
 1. **移動イベントの検出**: センサーから `INPUT_EV_REL` タイプのイベント（相対移動イベント）がZMKのInputサブシステムに報告されると、`keytoggle_handle_event` 関数が呼び出されます。
-2. **キーの押下**: `keytoggle_handle_event` 関数内で、`is_pressed` フラグが `false` の場合（キーがまだ押されていない場合）、設定された `keycode` のキープレスイベントがZMKの動作キューに送信され、`is_pressed` フラグが `true` に設定されます。
+2. **キーの押下**: `keytoggle_handle_event` 関数内で、`is_pressed` フラグが `false` の場合（キーがまだ押されていない場合）、設定された `keycodes` のキープレスイベントがZMKの動作キューに送信され、`is_pressed` フラグが `true` に設定されます。
 3. **キーリリースタイマーのリセット**: 移動イベントが検出されるたびに、キーリリース用の遅延ワークアイテム（`key_release_work`）がリセットされます。これにより、移動が続いている間はキーが押下状態に保たれます。
-4. **キーのリリース**: 一定時間（デフォルトでは100ミリ秒、`K_MSEC(100)`で設定）移動イベントが検出されない場合、`key_release_work` が実行されます。`key_release_callback` 関数内で `is_pressed` フラグが `true` の場合、設定された `keycode` のキーリリースイベントがZMKの動作キューに送信され、`is_pressed` フラグが `false` に設定されます。
+4. **キーのリリース**: 一定時間（デフォルトでは100ミリ秒、`K_MSEC(100)`で設定）移動イベントが検出されない場合、`key_release_work` が実行されます。`key_release_callback` 関数内で `is_pressed` フラグが `true` の場合、設定された `keycodes` のキーリリースイベントがZMKの動作キューに送信され、`is_pressed` フラグが `false` に設定されます。
 
 この仕組みにより、センサーが移動を検知している間だけキーが押下され、移動が停止するとキーがリリースされる動作が実現されます。
 

@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2024 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+
+#include <dt-bindings/zmk/keys.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+
+/ {
+    /omit-if-no-ref/ zip_keytoggle: zip_keytoggle {
+        compatible = "zmk,input-processor-keytoggle";
+        #input-processor-cells = <0>;
+        keycodes = <LS(MCLK)>;
+        tap-ms = <30>;
+        wait-ms = <15>;
+    };
+};
+
+
