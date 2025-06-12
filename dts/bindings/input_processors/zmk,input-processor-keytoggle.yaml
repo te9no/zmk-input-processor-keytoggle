@@ -8,13 +8,19 @@ compatible: "zmk,input-processor-keytoggle"
 include: ip_zero_param.yaml
 
 properties:
-  keycodes:
-    description: "Behaviors to be invoked"
-    type: array
+  keycode:
+    description: "Behavior to be invoked while movement is detected."
+    type: uint32
     required: true
+  release-delay-ms:
+    description: "Time to wait (in milliseconds) after the last movement event before releasing the key. If omitted, it will be set to 100."
+    type: int
+    default: 100
+  tap-ms:
+    description: "Time to wait (in milliseconds) between the press and release events on a triggered behavior binding for the initial press. If omitted, it will be set to 0."
+    type: int
+    default: 0
   wait-ms:
     description: "Time to wait (in milliseconds) before triggering the next behavior binding. If omitted, it will be set to 0."
     type: int
-  tap-ms:
-    description: "Time to wait (in milliseconds) between the press and release events on a triggered behavior binding. If omitted, it will be set to 0."
-    type: int
+    default: 0
