@@ -10,7 +10,7 @@ include: ip_zero_param.yaml
 properties:
   keycode:
     description: "Behavior to be invoked while movement is detected."
-    type: uint32
+    type: int
     required: true
   release-delay-ms:
     description: "Time to wait (in milliseconds) after the last movement event before releasing the key. If omitted, it will be set to 100."
