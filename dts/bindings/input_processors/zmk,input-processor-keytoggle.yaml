@@ -8,9 +8,12 @@ compatible: "zmk,input-processor-keytoggle"
 include: ip_zero_param.yaml
 
 properties:
-  keycode:
-    description: "Behavior to be invoked while movement is detected."
+  "#input-processor-cells":
     type: int
+    const: 0
+  bindings:
+    description: "Behavior to be invoked"
+    type: phandle-array
     required: true
   release-delay-ms:
     description: "Time to wait (in milliseconds) after the last movement event before releasing the key. If omitted, it will be set to 100."

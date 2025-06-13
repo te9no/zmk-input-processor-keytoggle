@@ -12,7 +12,7 @@
     /omit-if-no-ref/ zip_keytoggle: zip_keytoggle {
         compatible = "zmk,input-processor-keytoggle";
         #input-processor-cells = <0>;
-        keycodes = <LS(MCLK)>;
+        bindings = <&kp LEFT>;
         tap-ms = <30>;
         wait-ms = <15>;
     };

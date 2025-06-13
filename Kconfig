@@ -1,8 +1,1 @@
-# Key Toggle Input Processor
-DT_COMPAT_ZMK_INPUT_PROCESSOR_KEYTOGGLE := zmk,input-processor-keytoggle
-
-config ZMK_INPUT_PROCESSOR_KEYTOGGLE
-    bool "Key Toggle Input Processor"
-    help
-        Enable the key toggle input processor, which can be used to toggle
-        a key's state based on input events.
+rsource "src/pointing/Kconfig"
