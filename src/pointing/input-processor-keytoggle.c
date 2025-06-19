@@ -47,7 +47,8 @@ static void key_release_callback(struct k_work *work) {
     const struct keytoggle_config *config = state->config;
 
     struct zmk_behavior_binding_event behavior_event = {
-        .position = 0, // 必要に応じて修正
+        .layer = zmk_keymap_highest_layer_active(),
+        .position = ZMK_VIRTUAL_KEY_POSITION_SENSOR(0),
         .timestamp = k_uptime_get(),
 #if IS_ENABLED(CONFIG_ZMK_SPLIT)
         .source = ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
@@ -55,7 +56,10 @@ static void key_release_callback(struct k_work *work) {
     };
 
     if (state->is_pressed) {
-        zmk_behavior_invoke_binding(&config->bindings[0], behavior_event, false);
+        int ret = zmk_behavior_queue_add(&behavior_event, config->bindings[0], false, 0);
+        if (ret < 0) {
+            LOG_WRN("Failed to queue key release: %d", ret);
+        }
         state->is_pressed = false;
     }
 }
@@ -82,14 +86,17 @@ static int keytoggle_handle_event(const struct device *dev, struct input_event *
     if (event->type == INPUT_EV_REL) {
         if (!state->is_pressed) {
             struct zmk_behavior_binding_event behavior_event = {
-                .position = 0, // 必要に応じて修正
+                .layer = zmk_keymap_highest_layer_active(),
+                .position = ZMK_VIRTUAL_KEY_POSITION_SENSOR(0),
                 .timestamp = k_uptime_get(),
 #if IS_ENABLED(CONFIG_ZMK_SPLIT)
                 .source = ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
 #endif
             };
-            int ret = zmk_behavior_invoke_binding(&config->bindings[0], behavior_event, true);
+            
+            int ret = zmk_behavior_queue_add(&behavior_event, config->bindings[0], true, config->tap_ms);
             if (ret < 0) {
+                LOG_WRN("Failed to queue key press: %d", ret);
                 return ret;
             }
             state->is_pressed = true;
