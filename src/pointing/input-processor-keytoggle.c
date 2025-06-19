@@ -56,11 +56,12 @@ static void key_release_callback(struct k_work *work) {
     };
 
     if (state->is_pressed) {
-        int ret = zmk_behavior_queue_add(&behavior_event, config->bindings[0], false, 0);
+        int ret = zmk_behavior_invoke_binding(&config->bindings[0], behavior_event, false);
         if (ret < 0) {
-            LOG_WRN("Failed to queue key release: %d", ret);
+            LOG_WRN("Failed to invoke key release: %d", ret);
         }
         state->is_pressed = false;
+        LOG_DBG("Key released");
     }
 }
 
@@ -84,24 +85,29 @@ static int keytoggle_handle_event(const struct device *dev, struct input_event *
     const struct keytoggle_config *config = dev->config;
 
     if (event->type == INPUT_EV_REL) {
-        if (!state->is_pressed) {
-            struct zmk_behavior_binding_event behavior_event = {
-                .layer = zmk_keymap_highest_layer_active(),
-                .position = ZMK_VIRTUAL_KEY_POSITION_SENSOR(0),
-                .timestamp = k_uptime_get(),
+        // Only process non-zero movements to avoid triggering on zero events
+        if (event->value != 0) {
+            if (!state->is_pressed) {
+                struct zmk_behavior_binding_event behavior_event = {
+                    .layer = zmk_keymap_highest_layer_active(),
+                    .position = ZMK_VIRTUAL_KEY_POSITION_SENSOR(0),
+                    .timestamp = k_uptime_get(),
 #if IS_ENABLED(CONFIG_ZMK_SPLIT)
-                .source = ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
+                    .source = ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
 #endif
-            };
-            
-            int ret = zmk_behavior_queue_add(&behavior_event, config->bindings[0], true, config->tap_ms);
-            if (ret < 0) {
-                LOG_WRN("Failed to queue key press: %d", ret);
-                return ret;
+                };
+                
+                int ret = zmk_behavior_invoke_binding(&config->bindings[0], behavior_event, true);
+                if (ret < 0) {
+                    LOG_WRN("Failed to invoke key press: %d", ret);
+                    return ret;
+                }
+                state->is_pressed = true;
+                LOG_DBG("Key pressed on movement: code=%d, value=%d", event->code, event->value);
             }
-            state->is_pressed = true;
+            // Reset the release timer on any movement
+            k_work_reschedule(&state->key_release_work, K_MSEC(config->release_delay_ms));
         }
-        k_work_reschedule(&state->key_release_work, K_MSEC(config->release_delay_ms));
     }
     return ZMK_INPUT_PROC_CONTINUE;
 }
